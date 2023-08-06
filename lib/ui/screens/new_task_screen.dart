@@ -143,7 +143,8 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
                             },
                             onEditTap: () {
                               // showEditBottomSheet(_taskListModel.data![index]);
-                              showStatusUpdateBottomSheet(_taskListModel.data![index]);
+                              showStatusUpdateBottomSheet(
+                                  _taskListModel.data![index]);
                             },
                           );
                         },
@@ -190,9 +191,11 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
       isScrollControlled: true,
       context: context,
       builder: (context) {
-        return UpdateTaskStatusSheet(task: task, onUpdate: () {
-          getNewTasks();
-        });
+        return UpdateTaskStatusSheet(
+            task: task,
+            onUpdate: () {
+              getNewTasks();
+            });
       },
     );
   }
