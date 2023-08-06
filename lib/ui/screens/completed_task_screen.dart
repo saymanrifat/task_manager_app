@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intro_widget/data/models/network_response.dart';
+import 'package:intro_widget/data/models/task_list_model.dart';
+import 'package:intro_widget/data/services/network_caller.dart';
+import 'package:intro_widget/data/utils/urls.dart';
 import 'package:intro_widget/ui/screens/update_task_status_sheet.dart';
-
-import '../../data/models/network_response.dart';
-import '../../data/models/task_list_model.dart';
-import '../../data/services/network_caller.dart';
-import '../../data/utils/urls.dart';
-import '../widgets/task_list_tile.dart';
-import '../widgets/user_profile_banner.dart';
+import 'package:intro_widget/ui/widgets/task_list_tile.dart';
+import 'package:intro_widget/ui/widgets/user_profile_banner.dart';
 
 class CompletedTaskScreen extends StatefulWidget {
   const CompletedTaskScreen({Key? key}) : super(key: key);
