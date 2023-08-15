@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intro_widget/ui/screens/auth/otp_verification_screen.dart';
+import 'package:intro_widget/ui/utils/Routing.dart';
 import 'package:intro_widget/ui/widgets/screen_background.dart';
 
 class EmailVerificationScreen extends StatelessWidget {
@@ -15,19 +16,21 @@ class EmailVerificationScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 64,),
+                const SizedBox(
+                  height: 64,
+                ),
                 Text(
                   'Your email address',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
-                const SizedBox(height: 4,),
+                const SizedBox(
+                  height: 4,
+                ),
                 Text(
                   'A 6 digits pin will sent to your email address',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: Colors.grey,
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey,
+                      ),
                 ),
                 const SizedBox(
                   height: 24,
@@ -45,8 +48,10 @@ class EmailVerificationScreen extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => const OtpVerificationScreen()));
+                      // Navigator.push(context, MaterialPageRoute(
+                      //     builder: (context) => const OtpVerificationScreen()));
+
+                      GetxRouting().to(const OtpVerificationScreen());
                     },
                     child: const Icon(Icons.arrow_circle_right_outlined),
                   ),
@@ -62,9 +67,11 @@ class EmailVerificationScreen extends StatelessWidget {
                       style: TextStyle(
                           fontWeight: FontWeight.w500, letterSpacing: 0.5),
                     ),
-                    TextButton(onPressed: () {
-                      Navigator.pop(context);
-                    }, child: const Text('Sign in')),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Sign in')),
                   ],
                 )
               ],

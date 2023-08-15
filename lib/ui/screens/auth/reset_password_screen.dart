@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intro_widget/ui/screens/auth/login_screen.dart';
+import 'package:intro_widget/ui/utils/Routing.dart';
 import 'package:intro_widget/ui/widgets/screen_background.dart';
 
 class ResetPasswordScreen extends StatelessWidget {
@@ -58,11 +59,13 @@ class ResetPasswordScreen extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const LoginScreen()),
-                          (route) => false);
+                      // Navigator.pushAndRemoveUntil(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) => const LoginScreen()),
+                      //     (route) => false);
+
+                      GetxRouting().toOffAll(const LoginScreen());
                     },
                     child: const Text('Confirm'),
                   ),
@@ -80,11 +83,13 @@ class ResetPasswordScreen extends StatelessWidget {
                     ),
                     TextButton(
                         onPressed: () {
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const LoginScreen()),
-                              (route) => false);
+                          // Navigator.pushAndRemoveUntil(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => const LoginScreen()),
+                          //     (route) => false);
+
+                          GetxRouting().toOffAll(const LoginScreen());
                         },
                         child: const Text('Sign in')),
                   ],

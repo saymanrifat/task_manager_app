@@ -8,6 +8,7 @@ import 'package:intro_widget/ui/screens/add_new_task_screen.dart';
 import 'package:intro_widget/ui/screens/update_task_bottom_sheet.dart';
 import 'package:intro_widget/ui/screens/update_task_status_sheet.dart';
 import 'package:intro_widget/ui/state_manager/summeryCountController.dart';
+import 'package:intro_widget/ui/utils/Routing.dart';
 import 'package:intro_widget/ui/widgets/screen_background.dart';
 import 'package:intro_widget/ui/widgets/summary_card.dart';
 import 'package:intro_widget/ui/widgets/task_list_tile.dart';
@@ -157,10 +158,12 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const AddNewTaskScreen()));
+          // Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //         builder: (context) => const AddNewTaskScreen()));
+
+          GetxRouting().to(const AddNewTaskScreen());
         },
       ),
     );

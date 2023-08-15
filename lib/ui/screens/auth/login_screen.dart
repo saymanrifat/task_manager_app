@@ -4,6 +4,7 @@ import 'package:intro_widget/ui/screens/bottom_nav_base_screen.dart';
 import 'package:intro_widget/ui/screens/email_verification_screen.dart';
 import 'package:intro_widget/ui/screens/auth/signup_screen.dart';
 import 'package:intro_widget/ui/state_manager/login_controller.dart';
+import 'package:intro_widget/ui/utils/Routing.dart';
 import 'package:intro_widget/ui/widgets/screen_background.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -89,11 +90,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 Center(
                   child: InkWell(
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const EmailVerificationScreen()));
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) =>
+                      //             const EmailVerificationScreen()));
+
+                      GetxRouting().to(const EmailVerificationScreen());
                     },
                     child: const Text(
                       'Forgot Password?',
@@ -111,10 +114,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     TextButton(
                         onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const SignUpScreen()));
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => const SignUpScreen()));
+
+                          GetxRouting().to(const SignUpScreen());
                         },
                         child: const Text('Sign up')),
                   ],
