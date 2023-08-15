@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intro_widget/ui/screens/splash_screen.dart';
+import 'package:intro_widget/ui/state_manager/login_controller.dart';
+import 'package:intro_widget/ui/state_manager/summeryCountController.dart';
 
 class TaskManagerApp extends StatefulWidget {
   static GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
+
   const TaskManagerApp({Key? key}) : super(key: key);
 
   @override
@@ -12,10 +16,11 @@ class TaskManagerApp extends StatefulWidget {
 class _TaskManagerAppState extends State<TaskManagerApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       key: TaskManagerApp.globalKey,
       title: 'Task Manager',
+      initialBinding: ControllerBinding(),
       theme: ThemeData(
         brightness: Brightness.light,
         primarySwatch: Colors.green,
@@ -71,5 +76,13 @@ class _TaskManagerAppState extends State<TaskManagerApp> {
       themeMode: ThemeMode.light,
       home: const SplashScreen(),
     );
+  }
+}
+
+class ControllerBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.put(LoginController());
+    Get.put(SummaryCountController());
   }
 }
