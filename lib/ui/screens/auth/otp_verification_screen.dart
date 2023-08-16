@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intro_widget/ui/screens/auth/login_screen.dart';
 import 'package:intro_widget/ui/screens/auth/reset_password_screen.dart';
-import 'package:intro_widget/ui/utils/Routing.dart';
+import 'package:intro_widget/ui/utils/routing_managment.dart';
 import 'package:intro_widget/ui/widgets/screen_background.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 

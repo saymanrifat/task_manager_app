@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intro_widget/ui/screens/auth/login_screen.dart';
-import 'package:intro_widget/ui/utils/Routing.dart';
+import 'package:intro_widget/ui/utils/routing_managment.dart';
 import 'package:intro_widget/ui/widgets/screen_background.dart';
 
 class ResetPasswordScreen extends StatelessWidget {

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intro_widget/data/models/task_list_model.dart';
 import 'package:intro_widget/ui/screens/update_task_status_sheet.dart';
-
-import '../../data/models/network_response.dart';
-import '../../data/services/network_caller.dart';
-import '../../data/utils/urls.dart';
+import 'package:intro_widget/ui/state_manager/cancelled_task_controller.dart';
+import 'package:intro_widget/ui/state_manager/delete_task_controller.dart';
 import '../widgets/task_list_tile.dart';
 import '../widgets/user_profile_banner.dart';
 
@@ -16,35 +15,16 @@ class CancelledTaskScreen extends StatefulWidget {
 }
 
 class _CancelledTaskScreenState extends State<CancelledTaskScreen> {
-  bool _getCanceledTasksInProgress = false;
-  TaskListModel _taskListModel = TaskListModel();
-
-  Future<void> getCanceledTasks() async {
-    _getCanceledTasksInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
-    final NetworkResponse response =
-        await NetworkCaller().getRequest(Urls.canceledTasks);
-    if (response.isSuccess) {
-      _taskListModel = TaskListModel.fromJson(response.body!);
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Canceled tasks get failed')));
-      }
-    }
-    _getCanceledTasksInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
-  }
+  final CancelledTaskController _cancelledTaskController =
+      Get.put(CancelledTaskController());
+  final DeleteTaskController _deleteTaskController =
+      Get.put(DeleteTaskController());
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      getCanceledTasks();
+      _cancelledTaskController.getCanceledTasks();
     });
   }
 
@@ -55,53 +35,56 @@ class _CancelledTaskScreenState extends State<CancelledTaskScreen> {
         child: Column(
           children: [
             const UserProfileBanner(),
-            Expanded(
-              child: _getCanceledTasksInProgress
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : ListView.separated(
-                      itemCount: _taskListModel.data?.length ?? 0,
-                      itemBuilder: (context, index) {
-                        return TaskListTile(
-                          data: _taskListModel.data![index],
-                          onDeleteTap: () {
-                            deleteTask(_taskListModel.data![index].sId!);
-                          },
-                          onEditTap: () {
-                            // showEditBottomSheet(_taskListModel.data![index]);
-                            showStatusUpdateBottomSheet(
-                                _taskListModel.data![index]);
-                          },
-                        );
-                      },
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const Divider(
-                          height: 4,
-                        );
-                      },
-                    ),
-            ),
+            GetBuilder<CancelledTaskController>(
+                builder: (cancelledTaskController) {
+              return Expanded(
+                child: cancelledTaskController.getCanceledTasksInProgress
+                    ? const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : ListView.separated(
+                        itemCount: cancelledTaskController
+                                .taskListModel.data?.length ??
+                            0,
+                        itemBuilder: (context, index) {
+                          return TaskListTile(
+                            data: cancelledTaskController
+                                .taskListModel.data![index],
+                            onDeleteTap: () {
+                              _deleteTaskController
+                                  .deleteTask(
+                                      cancelledTaskController
+                                          .taskListModel.data![index].sId!,
+                                      cancelledTaskController.taskListModel)
+                                  .then((value) {
+                                if (value) {
+                                  Get.snackbar('Success', "Task Deleted");
+                                  _cancelledTaskController.getCanceledTasks();
+                                } else {
+                                  Get.snackbar('failed', "Task Deleted failed");
+                                }
+                              });
+                            },
+                            onEditTap: () {
+                              // showEditBottomSheet(_taskListModel.data![index]);
+                              showStatusUpdateBottomSheet(
+                                  cancelledTaskController
+                                      .taskListModel.data![index]);
+                            },
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return const Divider(
+                            height: 4,
+                          );
+                        },
+                      ),
+              );
+            }),
           ],
         ),
       ),
     );
-  }
-
-  Future<void> deleteTask(String taskId) async {
-    final NetworkResponse response =
-        await NetworkCaller().getRequest(Urls.deleteTask(taskId));
-    if (response.isSuccess) {
-      _taskListModel.data!.removeWhere((element) => element.sId == taskId);
-      if (mounted) {
-        setState(() {});
-      }
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Deletion of task has been failed')));
-      }
-    }
   }
 
   void showStatusUpdateBottomSheet(TaskData task) {
@@ -112,7 +95,12 @@ class _CancelledTaskScreenState extends State<CancelledTaskScreen> {
         return UpdateTaskStatusSheet(
             task: task,
             onUpdate: () {
-              getCanceledTasks();
+              _cancelledTaskController.getCanceledTasks().then((value) {
+                if (value) {
+                } else {
+                  Get.snackbar("Failed", "'Canceled tasks get failed'");
+                }
+              });
             });
       },
     );

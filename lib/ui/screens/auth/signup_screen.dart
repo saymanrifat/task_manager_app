@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intro_widget/data/models/network_response.dart';
-import 'package:intro_widget/data/services/network_caller.dart';
-import 'package:intro_widget/data/utils/urls.dart';
+import 'package:get/get.dart';
+import 'package:intro_widget/ui/state_manager/user_signup_controller.dart';
 import 'package:intro_widget/ui/widgets/screen_background.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -19,47 +18,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _passwordTEController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  bool _signUpInProgress = false;
-
-  Future<void> userSignUp() async {
-    _signUpInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
-
-    Map<String, dynamic> requestBody = {
-      "email": _emailTEController.text.trim(),
-      "firstName": _firstNameTEController.text.trim(),
-      "lastName": _lastNameTEController.text.trim(),
-      "mobile": _mobileTEController.text.trim(),
-      "password": _passwordTEController.text,
-      "photo": ""
-    };
-
-    final NetworkResponse response =
-        await NetworkCaller().postRequest(Urls.registration, requestBody);
-    _signUpInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
-    if (response.isSuccess) {
-      _emailTEController.clear();
-      _passwordTEController.clear();
-      _firstNameTEController.clear();
-      _lastNameTEController.clear();
-      _mobileTEController.clear();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Registration success!')));
-      }
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Registration failed!')));
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -163,21 +121,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(
                   height: 16,
                 ),
-                SizedBox(
-                  width: double.infinity,
-                  child: Visibility(
-                    visible: _signUpInProgress == false,
-                    replacement: const Center(child: CircularProgressIndicator()),
-                    child: ElevatedButton(
-                        onPressed: () {
-                          if (!_formKey.currentState!.validate()) {
-                            return;
-                          }
-                          userSignUp();
-                        },
-                        child: const Icon(Icons.arrow_forward_ios)),
-                  ),
-                ),
+                GetBuilder<SignupController>(builder: (signupController) {
+                  return SizedBox(
+                    width: double.infinity,
+                    child: Visibility(
+                      visible: signupController.signUpInProgress == false,
+                      replacement:
+                          const Center(child: CircularProgressIndicator()),
+                      child: ElevatedButton(
+                          onPressed: () {
+                            if (!_formKey.currentState!.validate()) {
+                              return;
+                            }
+                            signupController
+                                .userSignUp(
+                                    _emailTEController.text.trim(),
+                                    _firstNameTEController.text.trim(),
+                                    _lastNameTEController.text.trim(),
+                                    _mobileTEController.text.trim(),
+                                    _passwordTEController.text)
+                                .then((value) {
+                              if (value) {
+                                _emailTEController.clear();
+                                _passwordTEController.clear();
+                                _firstNameTEController.clear();
+                                _lastNameTEController.clear();
+                                _mobileTEController.clear();
+
+                                Get.snackbar(
+                                    'Success', 'Registration success!');
+                              } else {
+                                Get.snackbar("Failed", 'Registration failed!');
+                              }
+                            });
+                          },
+                          child: const Icon(Icons.arrow_forward_ios)),
+                    ),
+                  );
+                }),
                 const SizedBox(
                   height: 16,
                 ),

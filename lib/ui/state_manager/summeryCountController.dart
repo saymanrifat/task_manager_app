@@ -5,7 +5,7 @@ import 'package:intro_widget/data/services/network_caller.dart';
 import 'package:intro_widget/data/utils/urls.dart';
 
 class SummaryCountController extends GetxController {
-  bool _getCountSummaryInProgress = false, _getNewTaskInProgress = false;
+  bool _getCountSummaryInProgress = false;
   SummaryCountModel _summaryCountModel = SummaryCountModel();
 
   bool get getCountSummaryInProgress => _getCountSummaryInProgress;
@@ -29,7 +29,5 @@ class SummaryCountController extends GetxController {
       //       const SnackBar(content: Text('get new task data failed')));
       // }
     }
-    _getCountSummaryInProgress = false;
-    update();
   }
 }

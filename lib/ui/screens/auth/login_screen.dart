@@ -4,7 +4,7 @@ import 'package:intro_widget/ui/screens/bottom_nav_base_screen.dart';
 import 'package:intro_widget/ui/screens/email_verification_screen.dart';
 import 'package:intro_widget/ui/screens/auth/signup_screen.dart';
 import 'package:intro_widget/ui/state_manager/login_controller.dart';
-import 'package:intro_widget/ui/utils/Routing.dart';
+import 'package:intro_widget/ui/utils/routing_managment.dart';
 import 'package:intro_widget/ui/widgets/screen_background.dart';
 
 class LoginScreen extends StatefulWidget {

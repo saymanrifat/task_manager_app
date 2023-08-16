@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intro_widget/data/models/network_response.dart';
-import 'package:intro_widget/data/services/network_caller.dart';
-import 'package:intro_widget/data/utils/urls.dart';
+import 'package:get/get.dart';
+import 'package:intro_widget/ui/state_manager/add_new_task_controller.dart';
 import 'package:intro_widget/ui/widgets/user_profile_banner.dart';
 
 class AddNewTaskScreen extends StatefulWidget {
@@ -15,38 +14,6 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
   final TextEditingController _titleTEController = TextEditingController();
   final TextEditingController _descriptionTEController =
       TextEditingController();
-  bool _adNewTaskInProgress = false;
-
-  Future<void> addNewTask() async {
-    _adNewTaskInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
-    Map<String, dynamic> requestBody = {
-      "title": _titleTEController.text.trim(),
-      "description": _descriptionTEController.text.trim(),
-      "status": "New"
-    };
-    final NetworkResponse response =
-        await NetworkCaller().postRequest(Urls.createTask, requestBody);
-    _adNewTaskInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
-    if (response.isSuccess) {
-      _titleTEController.clear();
-      _descriptionTEController.clear();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Task added successfully')));
-      }
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('Task add failed!')));
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,20 +55,36 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
                   const SizedBox(
                     height: 16,
                   ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: Visibility(
-                      visible: _adNewTaskInProgress == false,
-                      replacement: const Center(
-                        child: CircularProgressIndicator(),
+                  GetBuilder<AddNewTaskController>(
+                      builder: (addNewTaskController) {
+                    return SizedBox(
+                      width: double.infinity,
+                      child: Visibility(
+                        visible:
+                            addNewTaskController.addNewTaskInProgress == false,
+                        replacement: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                        child: ElevatedButton(
+                            onPressed: () {
+                              addNewTaskController
+                                  .addNewTask(_titleTEController.text.trim(),
+                                      _descriptionTEController.text.trim())
+                                  .then((value) {
+                                if (value) {
+                                  _titleTEController.clear();
+                                  _descriptionTEController.clear();
+                                  Get.snackbar(
+                                      "Success", 'Task added successfully');
+                                } else {
+                                  Get.snackbar('failed', 'Task add failed!');
+                                }
+                              });
+                            },
+                            child: const Icon(Icons.arrow_forward_ios)),
                       ),
-                      child: ElevatedButton(
-                          onPressed: () {
-                            addNewTask();
-                          },
-                          child: const Icon(Icons.arrow_forward_ios)),
-                    ),
-                  ),
+                    );
+                  }),
                 ],
               ),
             ),

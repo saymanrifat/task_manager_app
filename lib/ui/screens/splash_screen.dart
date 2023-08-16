@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intro_widget/data/models/auth_utility.dart';
 import 'package:intro_widget/ui/screens/auth/login_screen.dart';
 import 'package:intro_widget/ui/screens/bottom_nav_base_screen.dart';
-import 'package:intro_widget/ui/utils/Routing.dart';
+import 'package:intro_widget/ui/utils/routing_managment.dart';
 import 'package:intro_widget/ui/utils/assets_utils.dart';
 import 'package:intro_widget/ui/widgets/screen_background.dart';
 

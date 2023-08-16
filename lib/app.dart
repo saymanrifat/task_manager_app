@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intro_widget/ui/screens/splash_screen.dart';
+import 'package:intro_widget/ui/state_manager/add_new_task_controller.dart';
+import 'package:intro_widget/ui/state_manager/cancelled_task_controller.dart';
 import 'package:intro_widget/ui/state_manager/login_controller.dart';
 import 'package:intro_widget/ui/state_manager/summeryCountController.dart';
+import 'package:intro_widget/ui/state_manager/user_signup_controller.dart';
 
 class TaskManagerApp extends StatefulWidget {
   static GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
@@ -84,5 +87,10 @@ class ControllerBinding extends Bindings {
   void dependencies() {
     Get.put(LoginController());
     Get.put(SummaryCountController());
+    Get.put(SignupController());
+    Get.put(CancelledTaskController());
+    Get.put(AddNewTaskController());
+    Get.put(CancelledTaskController());
+
   }
 }

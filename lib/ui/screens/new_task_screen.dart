@@ -7,8 +7,9 @@ import 'package:intro_widget/data/utils/urls.dart';
 import 'package:intro_widget/ui/screens/add_new_task_screen.dart';
 import 'package:intro_widget/ui/screens/update_task_bottom_sheet.dart';
 import 'package:intro_widget/ui/screens/update_task_status_sheet.dart';
+import 'package:intro_widget/ui/state_manager/delete_task_controller.dart';
 import 'package:intro_widget/ui/state_manager/summeryCountController.dart';
-import 'package:intro_widget/ui/utils/Routing.dart';
+import 'package:intro_widget/ui/utils/routing_managment.dart';
 import 'package:intro_widget/ui/widgets/screen_background.dart';
 import 'package:intro_widget/ui/widgets/summary_card.dart';
 import 'package:intro_widget/ui/widgets/task_list_tile.dart';
@@ -28,6 +29,8 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
 
   final SummaryCountController _summaryCountController =
       Get.find<SummaryCountController>();
+  final DeleteTaskController _deleteTaskController =
+      Get.put(DeleteTaskController());
 
   @override
   void initState() {
@@ -57,22 +60,6 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
     _getNewTaskInProgress = false;
     if (mounted) {
       setState(() {});
-    }
-  }
-
-  Future<void> deleteTask(String taskId) async {
-    final NetworkResponse response =
-        await NetworkCaller().getRequest(Urls.deleteTask(taskId));
-    if (response.isSuccess) {
-      _taskListModel.data!.removeWhere((element) => element.sId == taskId);
-      if (mounted) {
-        setState(() {});
-      }
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Deletion of task has been failed')));
-      }
     }
   }
 
@@ -135,7 +122,19 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
                           return TaskListTile(
                             data: _taskListModel.data![index],
                             onDeleteTap: () {
-                              deleteTask(_taskListModel.data![index].sId!);
+                              // _deleteTaskController
+                              //     .deleteTask(
+                              //     cancelledTaskController
+                              //         .taskListModel.data![index].sId!,
+                              //     cancelledTaskController.taskListModel)
+                              //     .then((value) {
+                              //   if (value) {
+                              //     Get.snackbar('Success', "Task Deleted");
+                              //     _cancelledTaskController.getCanceledTasks();
+                              //   } else {
+                              //     Get.snackbar('failed', "Task Deleted failed");
+                              //   }
+                              // });
                             },
                             onEditTap: () {
                               // showEditBottomSheet(_taskListModel.data![index]);
