@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intro_widget/data/models/network_response.dart';
+import 'package:get/get.dart';
 import 'package:intro_widget/data/models/task_list_model.dart';
-import 'package:intro_widget/data/services/network_caller.dart';
-import 'package:intro_widget/data/utils/urls.dart';
+import 'package:intro_widget/ui/state_manager/update_task_controller.dart';
 
 class UpdateTaskSheet extends StatefulWidget {
   final TaskData task;
@@ -17,10 +16,7 @@ class UpdateTaskSheet extends StatefulWidget {
 
 class _UpdateTaskSheetState extends State<UpdateTaskSheet> {
   late TextEditingController _titleTEController;
-
   late TextEditingController _descriptionTEController;
-
-  bool _updateTaskInProgress = false;
 
   @override
   void initState() {
@@ -28,37 +24,6 @@ class _UpdateTaskSheetState extends State<UpdateTaskSheet> {
     _descriptionTEController =
         TextEditingController(text: widget.task.description);
     super.initState();
-  }
-
-  Future<void> updateTask() async {
-    _updateTaskInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
-    Map<String, dynamic> requestBody = {
-      "title": _titleTEController.text.trim(),
-      "description": _descriptionTEController.text.trim(),
-    };
-    final NetworkResponse response =
-        await NetworkCaller().postRequest(Urls.createTask, requestBody);
-    _updateTaskInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
-    if (response.isSuccess) {
-      _titleTEController.clear();
-      _descriptionTEController.clear();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Task updated successfully')));
-      }
-      widget.onUpdate();
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('Task update failed!')));
-      }
-    }
   }
 
   @override
@@ -107,20 +72,36 @@ class _UpdateTaskSheetState extends State<UpdateTaskSheet> {
               const SizedBox(
                 height: 16,
               ),
-              SizedBox(
-                width: double.infinity,
-                child: Visibility(
-                  visible: _updateTaskInProgress == false,
-                  replacement: const Center(
-                    child: CircularProgressIndicator(),
+              GetBuilder<UpdateTaskController>(builder: (updateTaskController) {
+                return SizedBox(
+                  width: double.infinity,
+                  child: Visibility(
+                    visible: updateTaskController.updateTaskInProgress == false,
+                    replacement: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    child: ElevatedButton(
+                        onPressed: () {
+                          updateTaskController
+                              .updateTask(_titleTEController.text.trim(),
+                                  _descriptionTEController.text.trim())
+                              .then((value) {
+                            if (value) {
+                              _titleTEController.clear();
+                              _descriptionTEController.clear();
+                              widget.onUpdate();
+                              Get.snackbar(
+                                  "Success", 'Task updated successfully');
+                            } else {
+                              Get.snackbar(
+                                  "Failed", 'Task updated unsuccessfully');
+                            }
+                          });
+                        },
+                        child: const Text('Update')),
                   ),
-                  child: ElevatedButton(
-                      onPressed: () {
-                        updateTask();
-                      },
-                      child: const Text('Update')),
-                ),
-              ),
+                );
+              }),
             ],
           ),
         ),

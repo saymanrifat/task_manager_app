@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intro_widget/data/models/network_response.dart';
+import 'package:get/get.dart';
 import 'package:intro_widget/data/models/task_list_model.dart';
-import 'package:intro_widget/data/services/network_caller.dart';
-import 'package:intro_widget/data/utils/urls.dart';
 import 'package:intro_widget/ui/screens/update_task_status_sheet.dart';
+import 'package:intro_widget/ui/state_manager/completed_task_controller.dart';
+import 'package:intro_widget/ui/state_manager/delete_task_controller.dart';
 import 'package:intro_widget/ui/widgets/task_list_tile.dart';
 import 'package:intro_widget/ui/widgets/user_profile_banner.dart';
 
@@ -15,35 +15,17 @@ class CompletedTaskScreen extends StatefulWidget {
 }
 
 class _CompletedTaskScreenState extends State<CompletedTaskScreen> {
-  bool _getCompletedTasksInProgress = false;
-  TaskListModel _taskListModel = TaskListModel();
+  final CompletedTaskController _completedTaskController =
+      Get.find<CompletedTaskController>();
 
-  Future<void> getCompletedTasks() async {
-    _getCompletedTasksInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
-    final NetworkResponse response =
-        await NetworkCaller().getRequest(Urls.completedTasks);
-    if (response.isSuccess) {
-      _taskListModel = TaskListModel.fromJson(response.body!);
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('In progress tasks get failed')));
-      }
-    }
-    _getCompletedTasksInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
-  }
+  final DeleteTaskController _deleteTaskController =
+      Get.find<DeleteTaskController>();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      getCompletedTasks();
+      _completedTaskController.getCompletedTasks();
     });
   }
 
@@ -54,53 +36,56 @@ class _CompletedTaskScreenState extends State<CompletedTaskScreen> {
         child: Column(
           children: [
             const UserProfileBanner(),
-            Expanded(
-              child: _getCompletedTasksInProgress
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : ListView.separated(
-                      itemCount: _taskListModel.data?.length ?? 0,
-                      itemBuilder: (context, index) {
-                        return TaskListTile(
-                          data: _taskListModel.data![index],
-                          onDeleteTap: () {
-                            deleteTask(_taskListModel.data![index].sId!);
-                          },
-                          onEditTap: () {
-                            // showEditBottomSheet(_taskListModel.data![index]);
-                            showStatusUpdateBottomSheet(
-                                _taskListModel.data![index]);
-                          },
-                        );
-                      },
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const Divider(
-                          height: 4,
-                        );
-                      },
-                    ),
-            ),
+            GetBuilder<CompletedTaskController>(
+                builder: (completedTaskController) {
+              return Expanded(
+                child: completedTaskController.getCompletedTasksInProgress
+                    ? const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : ListView.separated(
+                        itemCount: completedTaskController
+                                .taskListModel.data?.length ??
+                            0,
+                        itemBuilder: (context, index) {
+                          return TaskListTile(
+                            data: completedTaskController
+                                .taskListModel.data![index],
+                            onDeleteTap: () {
+                              _deleteTaskController
+                                  .deleteTask(
+                                      completedTaskController
+                                          .taskListModel.data![index].sId!,
+                                      completedTaskController.taskListModel)
+                                  .then((value) {
+                                if (value) {
+                                  Get.snackbar('Success', "Task Deleted");
+                                  completedTaskController.getCompletedTasks();
+                                } else {
+                                  Get.snackbar('failed', "Task Deleted failed");
+                                }
+                              });
+                            },
+                            onEditTap: () {
+                              // showEditBottomSheet(_taskListModel.data![index]);
+                              showStatusUpdateBottomSheet(
+                                  completedTaskController
+                                      .taskListModel.data![index]);
+                            },
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return const Divider(
+                            height: 4,
+                          );
+                        },
+                      ),
+              );
+            }),
           ],
         ),
       ),
     );
-  }
-
-  Future<void> deleteTask(String taskId) async {
-    final NetworkResponse response =
-        await NetworkCaller().getRequest(Urls.deleteTask(taskId));
-    if (response.isSuccess) {
-      _taskListModel.data!.removeWhere((element) => element.sId == taskId);
-      if (mounted) {
-        setState(() {});
-      }
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Deletion of task has been failed')));
-      }
-    }
   }
 
   void showStatusUpdateBottomSheet(TaskData task) {
@@ -111,7 +96,7 @@ class _CompletedTaskScreenState extends State<CompletedTaskScreen> {
         return UpdateTaskStatusSheet(
             task: task,
             onUpdate: () {
-              getCompletedTasks();
+              _completedTaskController.getCompletedTasks();
             });
       },
     );

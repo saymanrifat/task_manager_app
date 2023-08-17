@@ -16,9 +16,9 @@ class CancelledTaskScreen extends StatefulWidget {
 
 class _CancelledTaskScreenState extends State<CancelledTaskScreen> {
   final CancelledTaskController _cancelledTaskController =
-      Get.put(CancelledTaskController());
+      Get.find<CancelledTaskController>();
   final DeleteTaskController _deleteTaskController =
-      Get.put(DeleteTaskController());
+      Get.find<DeleteTaskController>();
 
   @override
   void initState() {
@@ -95,12 +95,7 @@ class _CancelledTaskScreenState extends State<CancelledTaskScreen> {
         return UpdateTaskStatusSheet(
             task: task,
             onUpdate: () {
-              _cancelledTaskController.getCanceledTasks().then((value) {
-                if (value) {
-                } else {
-                  Get.snackbar("Failed", "'Canceled tasks get failed'");
-                }
-              });
+              _cancelledTaskController.getCanceledTasks();
             });
       },
     );

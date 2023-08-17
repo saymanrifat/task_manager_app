@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intro_widget/ui/state_manager/add_new_task_controller.dart';
+import 'package:intro_widget/ui/state_manager/addNewTaskController/add_new_task_controller.dart';
 import 'package:intro_widget/ui/widgets/user_profile_banner.dart';
 
 class AddNewTaskScreen extends StatefulWidget {
